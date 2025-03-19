@@ -87,21 +87,18 @@ class MovieDetail(View):
             return redirect ('netflixapp: profile-list') 
                     
         
-@method_decorator(login_required,name='dispatch')
+@method_decorator(login_required, name='dispatch')
 class PlayMovie(View):
-    def get(self,request, *args, movie_id, **kwargs):
+    def get(self, request, *args, movie_id, **kwargs):
         try:
-            movie=Movie.objects.get(uuid=movie_id)
-            movie=movie.video.values()
+            movie = Movie.objects.get(uuid=movie_id)
+            movie_videos = list(movie.video.values())  # Convert QuerySet to a list
             
+            context = {
+                'movie': movie_videos  # Now it's JSON serializable
+            }
             
-            
-            context={
-            'movie':movie
-        }
-             
-            return render (request ,'playmovie.html',context)
+            return render(request, 'playmovie.html', context)
         
         except Movie.DoesNotExist:
-            return redirect ('netflixapp: profile-list') 
-                    
+            return redirect('netflixapp:profile-list')
